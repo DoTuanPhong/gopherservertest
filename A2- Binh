@@ -2,6 +2,7 @@ import socket
 import os
 import datetime
 visited_directories = set()  # Initialize an empty set to store visited directories
+text_files = []
 
 def send_gopher_request(server_address, server_port, request):
     try:
@@ -100,17 +101,16 @@ def download_file(file_name, selector, hostname, port):
     file_response = send_gopher_request(hostname, port, file_request)
     
     # Check if the downloaded content is properly terminated
-    if file_response.endswith("\r\n.\r\n"):
+    if file_response.endswith("\r\n.\r\n") or file_name.endswith(".txt"):
         # Save the file to the current directory
         with open(file_name, "wb") as file:
             file.write(file_response.encode())
-            # Get the size of the downloaded file
-        file_size = len(file_response.encode())
-        print(f"Downloaded file: {file_name}, Selector: {selector}, Hostname: {hostname}, Port: {port}")
-        print(f"Size of the text file: {file_size} bytes")
+        
+            text_files.append(os.path.abspath(file_name))
 
+        print(f"Downloaded file: {file_name}, Selector: {selector}, Hostname: {hostname}, Port: {port}")
     else:
-        print(f"Ignored improperly terminated text file: {file_name}, Selector: {selector}, Hostname: {hostname}, Port: {port}")
+        print(f"Ignored improperly terminated file: {file_name}, Selector: {selector}, Hostname: {hostname}, Port: {port}")
         return  # Skip saving the file if it's improperly terminated
 
 
@@ -120,5 +120,9 @@ server_port = 70  # Default Gopher port
 request = "" + "\r\n"
 # Start scanning from the root directory
 response = send_gopher_request(server_address, server_port, request)
-scan_directories(resp
-print("Number of Gopher directories on the server: ", len(visited_directories))
+scan_directories(response)
+print("The number of Gopher directories on the server: ", len(visited_directories))
+print("Number of text files:", len(text_files))
+print("List of text files:")
+for text_file in text_files:
+    print(text_file)
