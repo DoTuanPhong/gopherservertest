@@ -121,4 +121,4 @@ request = "" + "\r\n"
 # Start scanning from the root directory
 response = send_gopher_request(server_address, server_port, request)
 scan_directories(resp
-print("number direc: ", len(visited_directories))onse)
+print("Number of Gopher directories on the server: ", len(visited_directories))
